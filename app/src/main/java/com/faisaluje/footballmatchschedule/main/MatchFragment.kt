@@ -11,14 +11,14 @@ import android.view.ViewGroup
 import com.faisaluje.footballmatchschedule.R
 import com.faisaluje.footballmatchschedule.api.TheSportDBApi
 import com.faisaluje.footballmatchschedule.model.ApiResponse
-import com.faisaluje.footballmatchschedule.model.MatchDetail
+import com.faisaluje.footballmatchschedule.model.Event
 import com.google.gson.Gson
 import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.onRefresh
 import org.jetbrains.anko.support.v4.startActivity
 
 class MatchFragment: Fragment() {
-    private var match: MutableList<MatchDetail> = mutableListOf()
+    private var events: MutableList<Event> = mutableListOf()
     private lateinit var rv: RecyclerView
     private lateinit var swipe: SwipeRefreshLayout
     private var fixture = 1
@@ -41,7 +41,7 @@ class MatchFragment: Fragment() {
         swipe = view.find(R.id.swipe_schedule)
 
         rv.layoutManager = LinearLayoutManager(activity)
-        rv.adapter = MatchAdapter(match){
+        rv.adapter = MatchAdapter(events){
             startActivity<DetailActivity>("MATCH" to it)
         }
 
@@ -65,8 +65,8 @@ class MatchFragment: Fragment() {
 
             uiThread{
                 swipe.isRefreshing = false
-                match.clear()
-                match.addAll(data.events)
+                events.clear()
+                events.addAll(data.events)
                 rv.adapter?.notifyDataSetChanged()
             }
         }

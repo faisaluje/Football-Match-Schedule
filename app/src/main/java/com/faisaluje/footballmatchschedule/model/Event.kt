@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class MatchDetail(
+data class Event(
         @SerializedName("idEvent")
         var eventId: String?,
 

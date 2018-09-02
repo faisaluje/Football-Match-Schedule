@@ -1,4 +1,4 @@
-package com.faisaluje.footballmatchschedule.main
+package com.faisaluje.footballmatchschedule.schedule
 
 import android.graphics.Color
 import android.support.v7.widget.RecyclerView
@@ -14,19 +14,19 @@ import org.jetbrains.anko.*
 import org.jetbrains.anko.cardview.v7.cardView
 import org.jetbrains.anko.sdk25.coroutines.onClick
 
-class MatchAdapter(private val events: List<Event>, private val listener: (Event) -> Unit): RecyclerView.Adapter<MatchAdapter.ViewHolder>(){
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(MatchUI().createView(AnkoContext.create(parent.context, parent)))
+class ScheduleAdapter(private val events: List<Event>, private val listener: (Event) -> Unit): RecyclerView.Adapter<ScheduleAdapter.ScheduleViewHolder>(){
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScheduleViewHolder {
+        return ScheduleViewHolder(ScheduleUI().createView(AnkoContext.create(parent.context, parent)))
     }
 
     override fun getItemCount() = events.size
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ScheduleViewHolder, position: Int) {
         holder.bindItem(events[position], listener)
     }
 
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ScheduleViewHolder(view: View): RecyclerView.ViewHolder(view) {
         private val matchDate: TextView = itemView.find(R.id.date)
         private val homeTeam: TextView = itemView.find(R.id.homeTeam)
         private val homeScore: TextView = itemView.find(R.id.homeScore)
@@ -43,13 +43,11 @@ class MatchAdapter(private val events: List<Event>, private val listener: (Event
             awayTeam.text = event.awayTeam
             awayScore.text = event.awayScore
 
-            itemView.onClick {
-                listener(event)
-            }
+            itemView.onClick { listener(event) }
         }
     }
 
-    class MatchUI: AnkoComponent<ViewGroup>{
+    class ScheduleUI: AnkoComponent<ViewGroup> {
         override fun createView(ui: AnkoContext<ViewGroup>) = with(ui){
             cardView {
                 lparams(width = matchParent, height = wrapContent){
@@ -69,48 +67,48 @@ class MatchAdapter(private val events: List<Event>, private val listener: (Event
 
                     relativeLayout {
 
-                        textView("Chelsea"){
+                        textView{
                             id = R.id.homeTeam
                             textSize = 16f
                             textColor = Color.BLACK
-                            gravity = Gravity.RIGHT
+                            gravity = Gravity.END
                         }.lparams(width = wrapContent, height = wrapContent){
                             leftOf(R.id.homeScore)
                             rightMargin = dip(10)
                         }
 
-                        textView("3"){
+                        textView{
                             id = R.id.homeScore
-                            textSize = 12f
+                            textSize = 14f
                             gravity = Gravity.CENTER
                             textColor = Color.BLACK
                         }.lparams(width = wrapContent, height = wrapContent){
                             leftOf(R.id.vs)
                         }
 
-                        textView("VS"){
+                        textView("vs"){
                             id = R.id.vs
-                            textSize = 10f
+                            textSize = 12f
                         }.lparams(width = wrapContent, height = wrapContent){
                             centerInParent()
                             leftMargin = dip(6)
                             rightMargin = dip(6)
                         }
 
-                        textView("2"){
+                        textView{
                             id = R.id.awayScore
-                            textSize = 12f
+                            textSize = 14f
                             gravity = Gravity.CENTER
                             textColor = Color.BLACK
                         }.lparams(width = wrapContent, height = wrapContent){
                             rightOf(R.id.vs)
                         }
 
-                        textView("Arsenal"){
+                        textView{
                             id = R.id.awayTeam
                             textSize = 16f
                             textColor = Color.BLACK
-                            gravity = Gravity.LEFT
+                            gravity = Gravity.START
                         }.lparams(width = wrapContent, height = wrapContent){
                             rightOf(R.id.awayScore)
                             leftMargin = dip(10)

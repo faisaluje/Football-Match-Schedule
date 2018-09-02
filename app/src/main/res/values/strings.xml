@@ -34,4 +34,5 @@
     <string name="italian_serie_a">Italian Serie A</string>
     <string name="french_ligue_1">French Ligue 1</string>
     <string name="spanish_la_liga">Spanish La Liga</string>
+    <string name="favorites">Favorites</string>
 </resources>

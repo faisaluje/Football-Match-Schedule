@@ -6,7 +6,7 @@ import android.view.MenuItem
 import com.faisaluje.footballmatchschedule.R
 import com.faisaluje.footballmatchschedule.api.TheSportDBApi
 import com.faisaluje.footballmatchschedule.model.ApiResponse
-import com.faisaluje.footballmatchschedule.model.MatchDetail
+import com.faisaluje.footballmatchschedule.model.Event
 import com.faisaluje.footballmatchschedule.util.changeFormatDate
 import com.faisaluje.footballmatchschedule.util.strToDate
 import com.google.gson.Gson
@@ -14,22 +14,20 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.match_detail.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.support.v4.onRefresh
-import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
-import java.net.NoRouteToHostException
 
 class DetailActivity: AppCompatActivity(){
-    private lateinit var match: MatchDetail
+    private lateinit var event: Event
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.match_detail)
 
-        match = intent.getParcelableExtra("MATCH")
+        event = intent.getParcelableExtra("MATCH")
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = match.eventName
+        supportActionBar?.title = event.eventName
         getData()
 
         swipe_match.onRefresh {
@@ -42,9 +40,9 @@ class DetailActivity: AppCompatActivity(){
         swipe_match.isRefreshing = true
         doAsync {
 
-            val matchData = Gson().fromJson(TheSportDBApi(match.eventId).getMatchDetail(), ApiResponse::class.java)
-            val homeTeam = Gson().fromJson(TheSportDBApi(match.homeTeamId).getTeamDetail(), ApiResponse::class.java)
-            val awayTeam = Gson().fromJson(TheSportDBApi(match.awayTeamId).getTeamDetail(), ApiResponse::class.java)
+            val matchData = Gson().fromJson(TheSportDBApi(event.eventId).getMatchDetail(), ApiResponse::class.java)
+            val homeTeam = Gson().fromJson(TheSportDBApi(event.homeTeamId).getTeamDetail(), ApiResponse::class.java)
+            val awayTeam = Gson().fromJson(TheSportDBApi(event.awayTeamId).getTeamDetail(), ApiResponse::class.java)
 
             uiThread {
                 val match = matchData.events[0]
