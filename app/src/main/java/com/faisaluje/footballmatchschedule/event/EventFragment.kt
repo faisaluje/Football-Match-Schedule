@@ -1,4 +1,4 @@
-package com.faisaluje.footballmatchschedule.schedule
+package com.faisaluje.footballmatchschedule.event
 
 import android.content.Context
 import android.os.Bundle
@@ -11,7 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.faisaluje.footballmatchschedule.R
 import com.faisaluje.footballmatchschedule.api.TheSportDBApi
-import com.faisaluje.footballmatchschedule.main.DetailActivity
+import com.faisaluje.footballmatchschedule.detail.EventDetailActivity
 import com.faisaluje.footballmatchschedule.model.Event
 import com.google.gson.Gson
 import org.jetbrains.anko.*
@@ -20,18 +20,18 @@ import org.jetbrains.anko.support.v4.ctx
 import org.jetbrains.anko.support.v4.onRefresh
 import org.jetbrains.anko.support.v4.swipeRefreshLayout
 
-class ScheduleFragment: Fragment(), AnkoComponent<Context>, ScheduleView{
+class EventFragment: Fragment(), AnkoComponent<Context>, EventView{
     private var events: MutableList<Event> = mutableListOf()
-    private lateinit var presenter: SchedulePresenter
-    private lateinit var scheduleList: RecyclerView
+    private lateinit var presenter: EventPresenter
+    private lateinit var eventList: RecyclerView
     private lateinit var swipeRefresh: SwipeRefreshLayout
-    private lateinit var adapter: ScheduleAdapter
+    private lateinit var adapter: EventAdapter
     private var fixture = 1
     private var leagueId = "4328"   //EPL
 
     companion object {
-        fun newFragment(fixture: Int, leagueId: String): ScheduleFragment {
-            val fragment = ScheduleFragment()
+        fun newFragment(fixture: Int, leagueId: String): EventFragment {
+            val fragment = EventFragment()
             fragment.fixture = fixture
             fragment.leagueId = leagueId
 
@@ -45,12 +45,12 @@ class ScheduleFragment: Fragment(), AnkoComponent<Context>, ScheduleView{
         val theSportDBApi = TheSportDBApi(leagueId)
         val api = if (fixture == 1) theSportDBApi.getPrevSchedule() else theSportDBApi.getNextSchedule()
         val gson = Gson()
-        presenter = SchedulePresenter(this, api, gson)
+        presenter = EventPresenter(this, api, gson)
 
-        adapter = ScheduleAdapter(events){
-            ctx.startActivity<DetailActivity>("EVENT" to it)
+        adapter = EventAdapter(events){
+            ctx.startActivity<EventDetailActivity>("EVENT" to it)
         }
-        scheduleList.adapter = adapter
+        eventList.adapter = adapter
 
         swipeRefresh.onRefresh {
             presenter.getList()
@@ -92,7 +92,7 @@ class ScheduleFragment: Fragment(), AnkoComponent<Context>, ScheduleView{
                     android.R.color.holo_red_light
                 )
 
-                scheduleList = recyclerView {
+                eventList = recyclerView {
                     lparams(width = matchParent, height = wrapContent)
                     layoutManager = LinearLayoutManager(ctx)
                 }

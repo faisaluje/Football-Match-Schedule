@@ -1,4 +1,4 @@
-package com.faisaluje.footballmatchschedule.schedule
+package com.faisaluje.footballmatchschedule.event
 
 import android.graphics.Color
 import android.support.v7.widget.RecyclerView
@@ -14,19 +14,19 @@ import org.jetbrains.anko.*
 import org.jetbrains.anko.cardview.v7.cardView
 import org.jetbrains.anko.sdk25.coroutines.onClick
 
-class ScheduleAdapter(private val events: List<Event>, private val listener: (Event) -> Unit): RecyclerView.Adapter<ScheduleAdapter.ScheduleViewHolder>(){
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScheduleViewHolder {
-        return ScheduleViewHolder(ScheduleUI().createView(AnkoContext.create(parent.context, parent)))
+class EventAdapter(private val events: List<Event>, private val listener: (Event) -> Unit): RecyclerView.Adapter<EventAdapter.EventViewHolder>(){
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventViewHolder {
+        return EventViewHolder(EventUI().createView(AnkoContext.create(parent.context, parent)))
     }
 
     override fun getItemCount() = events.size
 
-    override fun onBindViewHolder(holder: ScheduleViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: EventViewHolder, position: Int) {
         holder.bindItem(events[position], listener)
     }
 
 
-    class ScheduleViewHolder(view: View): RecyclerView.ViewHolder(view) {
+    class EventViewHolder(view: View): RecyclerView.ViewHolder(view) {
         private val matchDate: TextView = itemView.find(R.id.date)
         private val homeTeam: TextView = itemView.find(R.id.homeTeam)
         private val homeScore: TextView = itemView.find(R.id.homeScore)
@@ -47,7 +47,7 @@ class ScheduleAdapter(private val events: List<Event>, private val listener: (Ev
         }
     }
 
-    class ScheduleUI: AnkoComponent<ViewGroup> {
+    class EventUI: AnkoComponent<ViewGroup> {
         override fun createView(ui: AnkoContext<ViewGroup>) = with(ui){
             cardView {
                 lparams(width = matchParent, height = wrapContent){

@@ -1,8 +1,8 @@
-package com.faisaluje.footballmatchschedule.base
+package com.faisaluje.footballmatchschedule.event
 
 import com.faisaluje.footballmatchschedule.model.Event
 
-interface BaseView{
+interface EventView{
     fun showLoading()
     fun hideLoading()
     fun showList(data: List<Event>)

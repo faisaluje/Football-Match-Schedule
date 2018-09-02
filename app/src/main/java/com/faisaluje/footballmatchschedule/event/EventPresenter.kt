@@ -1,4 +1,4 @@
-package com.faisaluje.footballmatchschedule.base
+package com.faisaluje.footballmatchschedule.event
 
 import com.faisaluje.footballmatchschedule.api.ApiRepository
 import com.faisaluje.footballmatchschedule.model.ApiResponse
@@ -6,9 +6,9 @@ import com.google.gson.Gson
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
-open class BasePresenter(private val view: BaseView,
-                         private val api: String,
-                         private val gson: Gson){
+class EventPresenter(private val view: EventView,
+                     private val api: String,
+                     private val gson: Gson){
 
     fun getList(){
         view.showLoading()
