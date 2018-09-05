@@ -1,34 +1,58 @@
 package com.faisaluje.footballmatchschedule.detail
 
+import android.database.sqlite.SQLiteConstraintException
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
+import android.view.Menu
+import android.view.MenuItem
 import com.faisaluje.footballmatchschedule.R
 import com.faisaluje.footballmatchschedule.R.color.colorAccent
+import com.faisaluje.footballmatchschedule.R.drawable.ic_add_to_favorites
+import com.faisaluje.footballmatchschedule.R.drawable.ic_added_to_favorites
 import com.faisaluje.footballmatchschedule.api.TheSportDBApi
+import com.faisaluje.footballmatchschedule.db.Favorite
+import com.faisaluje.footballmatchschedule.db.database
 import com.faisaluje.footballmatchschedule.model.Event
+import com.faisaluje.footballmatchschedule.model.Team
 import com.faisaluje.footballmatchschedule.util.changeFormatDate
 import com.faisaluje.footballmatchschedule.util.strToDate
 import com.google.gson.Gson
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.match_detail.*
+import org.jetbrains.anko.db.classParser
+import org.jetbrains.anko.db.delete
+import org.jetbrains.anko.db.insert
+import org.jetbrains.anko.db.select
+import org.jetbrains.anko.design.snackbar
 import org.jetbrains.anko.support.v4.onRefresh
 
 class EventDetailActivity: AppCompatActivity(), EventDetailView{
     private lateinit var event: Event
     private lateinit var presenter: EventDetailPresenter
 
+    private var menuItem: Menu? = null
+    private var isFavorite: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.match_detail)
 
         event = intent.getParcelableExtra("EVENT")
+
         val date = strToDate(event.eventDate)
         tv_date.text = changeFormatDate(date)
+
         home_club.text = event.homeTeam
+        home_score.text = event.homeScore
+
         away_club.text = event.awayTeam
+        away_score.text = event.awayScore
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = event.eventName
+        supportActionBar?.title = "Match Detail"
+
+        favoriteState()
 
         val apiMatchDetail = TheSportDBApi(event.eventId).getMatchDetail()
         val apiHomeTeam = TheSportDBApi(event.homeTeamId).getTeamDetail()
@@ -54,7 +78,7 @@ class EventDetailActivity: AppCompatActivity(), EventDetailView{
         swipe_match.isRefreshing = false
     }
 
-    override fun showDetail(eventDetail: Event, homeTeam: Event, awayTeam: Event) {
+    override fun showDetail(eventDetail: Event, homeTeam: Team, awayTeam: Team) {
         Picasso.get().load(homeTeam.teamBadge).into(home_img)
         home_club.text = eventDetail.homeTeam
         home_score.text = eventDetail.homeScore
@@ -82,4 +106,76 @@ class EventDetailActivity: AppCompatActivity(), EventDetailView{
         hideLoading()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.detail_menu, menu)
+        menuItem = menu
+        setFavorite()
+
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        return when(item?.itemId){
+            android.R.id.home -> {
+                finish()
+                true
+            }
+            R.id.add_to_favorite -> {
+                if(isFavorite) removeFromFavorite() else addToFavorite()
+
+                isFavorite = !isFavorite
+                setFavorite()
+
+                true
+            }
+
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun addToFavorite(){
+        try {
+            database.use {
+                insert(Favorite.TABLE_FAVORITE,
+                        Favorite.EVENT_ID to event.eventId,
+                        Favorite.EVENT_NAME to event.eventName,
+                        Favorite.EVENT_DATE to event.eventDate,
+                        Favorite.HOME_TEAM_ID to event.homeTeamId,
+                        Favorite.HOME_TEAM_NAME to event.homeTeam,
+                        Favorite.HOME_TEAM_SCORE to event.homeScore,
+                        Favorite.AWAY_TEAM_ID to event.awayTeamId,
+                        Favorite.AWAY_TEAM_NAME to event.awayTeam,
+                        Favorite.AWAY_TEAM_SCORE to event.awayScore)
+            }
+            snackbar(swipe_match, "Added to favorite").show()
+        }catch (e: SQLiteConstraintException){
+            snackbar(swipe_match, e.localizedMessage).show()
+        }
+    }
+
+    private fun removeFromFavorite(){
+        try {
+            database.use{
+                delete(Favorite.TABLE_FAVORITE, "(EVENT_ID = {id})", "id" to event.eventId.orEmpty())
+            }
+            snackbar(swipe_match, "Removed to favorite").show()
+        } catch (e: SQLiteConstraintException){
+            snackbar(swipe_match, e.localizedMessage).show()
+        }
+    }
+
+    private fun setFavorite(){
+        val icon = if(isFavorite) ic_added_to_favorites else ic_add_to_favorites
+
+        menuItem?.getItem(0)?.icon = ContextCompat.getDrawable(this, icon)
+    }
+
+    private fun favoriteState(){
+        database.use {
+            val result = select(Favorite.TABLE_FAVORITE)
+                    .whereArgs("(EVENT_ID = {id})", "id" to event.eventId.orEmpty())
+            val favorite = result.parseList(classParser<Favorite>())
+            if (!favorite.isEmpty()) isFavorite = true
+        }
+    }
 }

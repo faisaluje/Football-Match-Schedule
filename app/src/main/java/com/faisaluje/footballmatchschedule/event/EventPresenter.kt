@@ -18,7 +18,7 @@ class EventPresenter(private val view: EventView,
 
             uiThread {
                 view.hideLoading()
-                if(data.events.isEmpty()) view.showList(data.teams) else view.showList(data.events)
+                view.showList(data.events)
             }
         }
     }

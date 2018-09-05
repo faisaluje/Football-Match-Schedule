@@ -9,6 +9,7 @@ import com.faisaluje.footballmatchschedule.R
 import com.faisaluje.footballmatchschedule.R.id.*
 import com.faisaluje.footballmatchschedule.R.layout.activity_main
 import com.faisaluje.footballmatchschedule.event.EventFragment
+import com.faisaluje.footballmatchschedule.favorite.FavoriteScheduleFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -34,7 +35,7 @@ class MainActivity : AppCompatActivity() {
                     return@setOnNavigationItemSelectedListener true
                 }
                 navigation_favorite -> {
-
+                    openFragment(FavoriteScheduleFragment())
                     return@setOnNavigationItemSelectedListener true
                 }
             }
@@ -76,7 +77,10 @@ class MainActivity : AppCompatActivity() {
                 leagueId = "4335"
             }
         }
-        openFragment(EventFragment.newFragment(fixture, leagueId))
+
+        if (nav_button.selectedItemId == navigation_favorite) nav_button.selectedItemId = navigation_prev
+        else openFragment(EventFragment.newFragment(fixture, leagueId))
+
         return super.onOptionsItemSelected(item)
     }
 }

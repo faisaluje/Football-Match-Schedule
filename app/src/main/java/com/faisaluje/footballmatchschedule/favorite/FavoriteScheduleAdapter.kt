@@ -1,6 +1,5 @@
-package com.faisaluje.footballmatchschedule.event
+package com.faisaluje.footballmatchschedule.favorite
 
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.support.v7.widget.RecyclerView
 import android.view.Gravity
@@ -8,48 +7,48 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.faisaluje.footballmatchschedule.R
-import com.faisaluje.footballmatchschedule.R.color.colorPrimary
-import com.faisaluje.footballmatchschedule.model.Event
+import com.faisaluje.footballmatchschedule.R.id.*
+import com.faisaluje.footballmatchschedule.db.Favorite
 import com.faisaluje.footballmatchschedule.util.changeFormatDate
 import com.faisaluje.footballmatchschedule.util.strToDate
 import org.jetbrains.anko.*
 import org.jetbrains.anko.cardview.v7.cardView
 import org.jetbrains.anko.sdk25.coroutines.onClick
 
-class EventAdapter(private val events: List<Event>, private val listener: (Event) -> Unit): RecyclerView.Adapter<EventAdapter.EventViewHolder>(){
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventViewHolder {
-        return EventViewHolder(EventUI().createView(AnkoContext.create(parent.context, parent)))
+class FavoriteScheduleAdapter(private val favorite: List<Favorite>, private val listener: (Favorite) -> Unit): RecyclerView.Adapter<FavoriteScheduleAdapter.FavoriteViewHolder>(){
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteViewHolder {
+        return FavoriteViewHolder(ScheduleUI().createView(AnkoContext.create(parent.context, parent)))
     }
 
-    override fun getItemCount() = events.size
+    override fun getItemCount() = favorite.size
 
-    override fun onBindViewHolder(holder: EventViewHolder, position: Int) {
-        holder.bindItem(events[position], listener)
+    override fun onBindViewHolder(holder: FavoriteViewHolder, position: Int) {
+        holder.bindItem(favorite[position], listener)
     }
 
 
-    class EventViewHolder(view: View): RecyclerView.ViewHolder(view) {
-        private val eventDate: TextView = itemView.find(R.id.date)
-        private val homeTeam: TextView = itemView.find(R.id.homeTeam)
-        private val homeScore: TextView = itemView.find(R.id.homeScore)
-        private val awayTeam: TextView = itemView.find(R.id.awayTeam)
-        private val awayScore: TextView = itemView.find(R.id.awayScore)
+    class FavoriteViewHolder(view: View): RecyclerView.ViewHolder(view){
+        private val eventDate: TextView = view.find(date)
+        private val homeTeam: TextView = view.find(R.id.homeTeam)
+        private val homeScore: TextView = view.find(R.id.homeScore)
+        private val awayTeam: TextView = view.find(R.id.awayTeam)
+        private val awayScore: TextView = view.find(R.id.awayScore)
 
-        fun bindItem(event: Event, listener: (Event) -> Unit){
-            val date = strToDate(event.eventDate)
+        fun bindItem(favorite: Favorite, listener: (Favorite) -> Unit){
+            val date = strToDate(favorite.eventDate)
             eventDate.text = changeFormatDate(date)
 
-            homeTeam.text = event.homeTeam
-            homeScore.text = event.homeScore
+            homeTeam.text = favorite.homeTeam
+            homeScore.text = favorite.homeScore
 
-            awayTeam.text = event.awayTeam
-            awayScore.text = event.awayScore
+            awayTeam.text = favorite.awayTeam
+            awayScore.text = favorite.awayScore
 
-            itemView.onClick { listener(event) }
+            itemView.onClick { listener(favorite) }
         }
     }
 
-    class EventUI: AnkoComponent<ViewGroup> {
+    class ScheduleUI: AnkoComponent<ViewGroup>{
         override fun createView(ui: AnkoContext<ViewGroup>) = with(ui){
             cardView {
                 lparams(width = matchParent, height = wrapContent){
@@ -62,7 +61,6 @@ class EventAdapter(private val events: List<Event>, private val listener: (Event
 
                     textView("Minggu, 04 Maret 2018"){
                         id = R.id.date
-                        textColorResource = colorPrimary
                     }.lparams(width = wrapContent, height = wrapContent){
                         gravity = Gravity.CENTER
                         margin = dip(8)
