@@ -1,6 +1,5 @@
 package com.faisaluje.footballmatchschedule.event
 
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.support.v7.widget.RecyclerView
 import android.view.Gravity
