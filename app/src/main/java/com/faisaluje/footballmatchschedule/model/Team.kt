@@ -7,11 +7,11 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class Team(
         @SerializedName("idTeam")
-        var teamId: String?,
+        var teamId: String? = null,
 
         @SerializedName("strTeam")
-        var teamName: String?,
+        var teamName: String? = null,
 
         @SerializedName("strTeamBadge")
-        var teamBadge: String?
+        var teamBadge: String? = null
 ): Parcelable

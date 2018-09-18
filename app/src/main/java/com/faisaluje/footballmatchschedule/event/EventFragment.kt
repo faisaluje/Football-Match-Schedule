@@ -93,6 +93,7 @@ class EventFragment: Fragment(), AnkoComponent<Context>, EventView{
                 )
 
                 eventList = recyclerView {
+                    id = R.id.rv_event_list
                     lparams(width = matchParent, height = wrapContent)
                     layoutManager = LinearLayoutManager(ctx)
                 }
