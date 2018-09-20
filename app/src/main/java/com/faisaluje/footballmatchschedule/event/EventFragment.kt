@@ -10,7 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.faisaluje.footballmatchschedule.R
-import com.faisaluje.footballmatchschedule.api.TheSportDBApi
+import com.faisaluje.footballmatchschedule.api.ApiRepository
 import com.faisaluje.footballmatchschedule.detail.EventDetailActivity
 import com.faisaluje.footballmatchschedule.model.Event
 import com.google.gson.Gson
@@ -42,10 +42,9 @@ class EventFragment: Fragment(), AnkoComponent<Context>, EventView{
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val theSportDBApi = TheSportDBApi(leagueId)
-        val api = if (fixture == 1) theSportDBApi.getPrevSchedule() else theSportDBApi.getNextSchedule()
+        val request = ApiRepository()
         val gson = Gson()
-        presenter = EventPresenter(this, api, gson)
+        presenter = EventPresenter(this, request, gson, fixture)
 
         adapter = EventAdapter(events){
             ctx.startActivity<EventDetailActivity>("EVENT" to it)
@@ -53,10 +52,10 @@ class EventFragment: Fragment(), AnkoComponent<Context>, EventView{
         eventList.adapter = adapter
 
         swipeRefresh.onRefresh {
-            presenter.getList()
+            presenter.getList(leagueId)
         }
 
-        presenter.getList()
+        presenter.getList(leagueId)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

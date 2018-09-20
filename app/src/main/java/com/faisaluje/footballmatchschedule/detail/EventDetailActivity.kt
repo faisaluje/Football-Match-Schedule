@@ -10,7 +10,7 @@ import com.faisaluje.footballmatchschedule.R
 import com.faisaluje.footballmatchschedule.R.color.colorAccent
 import com.faisaluje.footballmatchschedule.R.drawable.ic_add_to_favorites
 import com.faisaluje.footballmatchschedule.R.drawable.ic_added_to_favorites
-import com.faisaluje.footballmatchschedule.api.TheSportDBApi
+import com.faisaluje.footballmatchschedule.api.ApiRepository
 import com.faisaluje.footballmatchschedule.db.Favorite
 import com.faisaluje.footballmatchschedule.db.database
 import com.faisaluje.footballmatchschedule.model.Event
@@ -54,15 +54,13 @@ class EventDetailActivity: AppCompatActivity(), EventDetailView{
 
         favoriteState()
 
-        val apiMatchDetail = TheSportDBApi(event.eventId).getMatchDetail()
-        val apiHomeTeam = TheSportDBApi(event.homeTeamId).getTeamDetail()
-        val apiAwayTeam = TheSportDBApi(event.awayTeamId).getTeamDetail()
+        val request = ApiRepository()
         val gson = Gson()
-        presenter = EventDetailPresenter(this, apiMatchDetail, apiHomeTeam, apiAwayTeam, gson)
-        presenter.getEventDetail()
+        presenter = EventDetailPresenter(this, request, gson)
+        presenter.getEventDetail(event.eventId, event.homeTeamId, event.awayTeamId)
 
         swipe_match.onRefresh {
-            presenter.getEventDetail()
+            presenter.getEventDetail(event.eventId, event.homeTeamId, event.awayTeamId)
         }
         swipe_match.setColorSchemeResources(colorAccent,
                 android.R.color.holo_green_light,

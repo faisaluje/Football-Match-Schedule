@@ -3,7 +3,7 @@ package com.faisaluje.footballmatchschedule.api
 import android.net.Uri
 import com.faisaluje.footballmatchschedule.BuildConfig
 
-class TheSportDBApi(val id: String?){
+object TheSportDBApi{
 //    private fun urlBuild(path: String?) = Uri.parse(BuildConfig.BASE_URL).buildUpon()
 //            .appendPath("api")
 //            .appendPath("v1")
@@ -13,10 +13,10 @@ class TheSportDBApi(val id: String?){
 //            .appendQueryParameter("id", id)
 //            .build().toString()
 
-    private fun urlBuild(path: String?) = BuildConfig.BASE_URL+"api/v1/json/"+BuildConfig.TSDB_API_KEY+"/"+path+"?id="+id
+    private fun urlBuild(path: String, id: String?) = BuildConfig.BASE_URL+"api/v1/json/"+BuildConfig.TSDB_API_KEY+"/"+path+"?id="+id
 
-    fun getPrevSchedule() = urlBuild("eventspastleague.php")
-    fun getNextSchedule() = urlBuild("eventsnextleague.php")
-    fun getMatchDetail() = urlBuild("lookupevent.php")
-    fun getTeamDetail() = urlBuild("lookupteam.php")
+    fun getPrevSchedule(id: String?) = urlBuild("eventspastleague.php", id)
+    fun getNextSchedule(id: String?) = urlBuild("eventsnextleague.php", id)
+    fun getMatchDetail(id: String?) = urlBuild("lookupevent.php", id)
+    fun getTeamDetail(id: String?) = urlBuild("lookupteam.php", id)
 }

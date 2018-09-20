@@ -1,6 +1,7 @@
 package com.faisaluje.footballmatchschedule.detail
 
 import com.faisaluje.footballmatchschedule.TestContextProvider
+import com.faisaluje.footballmatchschedule.api.ApiRepository
 import com.faisaluje.footballmatchschedule.api.TheSportDBApi
 import com.faisaluje.footballmatchschedule.model.Event
 import com.faisaluje.footballmatchschedule.model.Team
@@ -20,29 +21,17 @@ class EventDetailPresenterTest {
     private lateinit var gson: Gson
 
     @Mock
-    private lateinit var apiMatchDetail: TheSportDBApi
+    private lateinit var apiRepository: ApiRepository
 
-    @Mock
-    private lateinit var apiHomeTeam: TheSportDBApi
-
-    @Mock
-    private lateinit var apiAwayTeam: TheSportDBApi
-
-    @Mock
     private lateinit var presenter: EventDetailPresenter
 
     @Before
     fun setUp(){
         MockitoAnnotations.initMocks(this)
 
-        apiMatchDetail = TheSportDBApi("576492")
-        apiHomeTeam = TheSportDBApi("133604")
-        apiAwayTeam = TheSportDBApi("133604")
         presenter = EventDetailPresenter(
                 view,
-                apiMatchDetail.getMatchDetail(),
-                apiHomeTeam.getTeamDetail(),
-                apiAwayTeam.getTeamDetail(),
+                apiRepository,
                 gson,
                 TestContextProvider()
         )
@@ -53,8 +42,11 @@ class EventDetailPresenterTest {
         val event = Event()
         val homeTeam = Team()
         val awayTeam = Team()
+        val eventId = "576492"
+        val homeTeamId = "133604"
+        val awayTeamId = "133604"
 
-        presenter.getEventDetail()
+        presenter.getEventDetail(eventId, homeTeamId, awayTeamId)
 
         verify(view).showLoading()
         verify(view).showDetail(event, homeTeam, awayTeam)
