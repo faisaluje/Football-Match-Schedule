@@ -2,7 +2,8 @@ package com.faisaluje.footballmatchschedule.detail
 
 import com.faisaluje.footballmatchschedule.api.ApiRepository
 import com.faisaluje.footballmatchschedule.api.TheSportDBApi
-import com.faisaluje.footballmatchschedule.model.ApiResponse
+import com.faisaluje.footballmatchschedule.model.MatchResponse
+import com.faisaluje.footballmatchschedule.model.TeamResponse
 import com.faisaluje.footballmatchschedule.util.CoroutineContextProvider
 import com.google.gson.Gson
 import kotlinx.coroutines.experimental.async
@@ -17,18 +18,20 @@ class EventDetailPresenter(private val view: EventDetailView,
         view.showLoading()
 
         async(context.main) {
-            val matchDetail = bg {
-                gson.fromJson(apiRepository.doRequest(TheSportDBApi.getMatchDetail(eventId)), ApiResponse::class.java)
-            }
-            val homeTeam = bg {
-                gson.fromJson(ApiRepository().doRequest(TheSportDBApi.getTeamDetail(homeTeamId)), ApiResponse::class.java)
-            }
-            val awayTeam = bg {
-                gson.fromJson(ApiRepository().doRequest(TheSportDBApi.getTeamDetail(awayTeamId)), ApiResponse::class.java)
-            }
+            async(context.main) {
+                val matchDetail = bg {
+                    gson.fromJson(apiRepository.doRequest(TheSportDBApi.getMatchDetail(eventId)), MatchResponse::class.java)
+                }
+                val homeTeam = bg {
+                    gson.fromJson(ApiRepository().doRequest(TheSportDBApi.getTeamDetail(homeTeamId)), TeamResponse::class.java)
+                }
+                val awayTeam = bg {
+                    gson.fromJson(ApiRepository().doRequest(TheSportDBApi.getTeamDetail(awayTeamId)), TeamResponse::class.java)
+                }
 
-            view.showDetail(matchDetail.await().events[0], homeTeam.await().teams[0], awayTeam.await().teams[0])
-            view.hideLoading()
+                view.showDetail(matchDetail.await().events, homeTeam.await().teams, awayTeam.await().teams)
+                view.hideLoading()
+            }
         }
     }
 

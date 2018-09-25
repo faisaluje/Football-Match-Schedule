@@ -76,7 +76,11 @@ class EventDetailActivity: AppCompatActivity(), EventDetailView{
         swipe_match.isRefreshing = false
     }
 
-    override fun showDetail(eventDetail: Event, homeTeam: Team, awayTeam: Team) {
+    override fun showDetail(eventDetails: List<Event>, homeTeams: List<Team>, awayTeams: List<Team>) {
+        val eventDetail = eventDetails.get(0)
+        val homeTeam = homeTeams.get(0)
+        val awayTeam = awayTeams.get(0)
+
         Picasso.get().load(homeTeam.teamBadge).into(home_img)
         home_club.text = eventDetail.homeTeam
         home_score.text = eventDetail.homeScore

@@ -2,7 +2,7 @@ package com.faisaluje.footballmatchschedule.event
 
 import com.faisaluje.footballmatchschedule.api.ApiRepository
 import com.faisaluje.footballmatchschedule.api.TheSportDBApi
-import com.faisaluje.footballmatchschedule.model.ApiResponse
+import com.faisaluje.footballmatchschedule.model.MatchResponse
 import com.faisaluje.footballmatchschedule.util.CoroutineContextProvider
 import com.google.gson.Gson
 import kotlinx.coroutines.experimental.async
@@ -21,7 +21,7 @@ class EventPresenter(private val view: EventView,
 
         async(context.main) {
             val data = bg {
-                gson.fromJson(apiRepository.doRequest(api), ApiResponse::class.java)
+                gson.fromJson(apiRepository.doRequest(api), MatchResponse::class.java)
             }
 
             view.showList(data.await().events)
